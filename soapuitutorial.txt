@@ -1,0 +1,207 @@
+###SOAPUI####
+Properties can be used as variables to store values that can be referred in testing
+
+Properties can be accessed at following levels:
+Project       -  ${#Project#PropertyName}
+TestSuite   -  ${#TestSuite#PropertyName}
+TestCase   -  ${#TestCase#PropertyName}
+TestStep    -  ${TestStepName#PropertyName}
+
+System   -    ${#System#PropertyName}
+Env        -     ${#Env#PropertyName}
+Global    -     ${#Global#PropertyName} 
+
+
+##Propr=erties
+// Get and Set Property
+
+//Project
+testRunner.testCase.testSuite.project.getPropertyValue("Name")
+testRunner.testCase.testSuite.project.setPropertyValue("Name","I am in Project")
+
+//TestSuite
+testRunner.testCase.testSuite.getPropertyValue("Name")
+testRunner.testCase.testSuite.setPropertyValue("Name","I am in TestSuite")
+
+//TestCase
+testRunner.testCase.getPropertyValue("Name")
+testRunner.testCase.setPropertyValue("Name","I am in TestCase")
+
+//TestStep
+testRunner.testCase.getTestStepByName("CountryCodes").getPropertyValue("Name")
+testRunner.testCase.getTestStepByName("CountryCodes").setPropertyValue("Name","I am in Test Step")
+
+//Global
+com.eviware.soapui.SoapUI.globalProperties.getPropertyValue( "Name")
+com.eviware.soapui.SoapUI.globalProperties.setPropertyValue( "Name","I am in Global Prop" )
+
+
+// Add Property
+testRunner.testCase.testSuite.project.addProperty("DOB")
+
+// Remove property
+//Project
+testRunner.testCase.testSuite.project.removeProperty("Name");
+//TestSuite
+testRunner.testCase.testSuite.removeProperty("Name")
+
+// Loop through properties
+
+testRunner.testCase.properties.each
+{
+ key,value -
+ log.info (testRunner.testCase.getPropertyValue(key))
+ //log.info (key+" - "+value)
+}
+
+
+###Groovy Script#####
+import java.io.*;
+
+log.info ("        Hello World ...  ");
+
+int a = 10 ;
+int b = 20 ;
+int c = a+b ;
+log.info ("   Result is : "+c) ;
+
+// this is a single line comment
+
+/*
+ * This is
+ * multiline comment
+ */
+
+ //log
+ //context
+ //testRunner
+
+log.info testRunner.metaClass.methods*.name.unique().sort()
+
+
+
+======================
+
+class Hello{
+
+ def log;
+ def context;
+ def testRunner;
+
+ def Hello(log, context, testRunner){
+  this.log = log
+  this.context = context
+  this.testRunner = testRunner
+ }
+
+ def sayHello(String name){
+  log.info ("   Hello "+name);
+ }
+ 
+}
+
+context.setProperty("Hello", new Hello(log,context,testRunner))
+
+
+========================
+
+def testStep = testRunner.testCase.getTestStepByName("Hello")
+
+testStep.run(testRunner, context)
+
+context.Hello.sayHello("Raghav")
+
+============================
+
+project = testRunner.testCase.testSuite.project ;
+ tcase = project.testSuites["TestSuite3"].testCases["TestCase1"] ; 
+ hello = tcase.getTestStepByName("Hello");
+
+hello.run(testRunner, context)
+
+context.Hello.sayHello("Raghav")
+
+
+project = testRunner.testCase.testSuite.project ;
+ tcase = project.testSuites["TestSuite"].testCases["TestCaseName"] ; 
+ hello = tcase.getTestStepByName("Hello");
+
+
+log.info testRunner.metaClass.methods*.name.unique().sort()
+
+context.setProperty("Hello", new Hello(log,context,testRunner))
+
+
+
+
+def hello = testRunner.testCase.getTestStepByName("Hello");
+
+hello.run(testRunner, context)
+
+def ref = context.Hello;
+ref.printHello("Raghav");
+
+
+Useful TIPS
+//Groovy - run request from same TestCase
+def status = testRunner.runTestStepByName("TestStepName")
+def result = status.getStatus().toString();
+log.info ("   ---- "+result)
+
+//Groovy - run request from another TestCase or TestSuite
+project = testRunner.testCase.testSuite.project ;
+tcase = project.testSuites["TestSuiteName"].testCases["TestCaseName"] ; 
+tstep = tcase.getTestStepByName("TestStepName");
+def status = tstep.run(testRunner, context)
+def result = status.getStatus().toString();
+log.info ("   ----   "+result)
+
+Useful TIPS
+---------------
+How to get list of all TCs in a test suite
+Get TestCaseName - testRunner.testCase.name
+
+
+
+Notes:
+groovy code to run test case
+=====================
+def tCase = testRunner.testCase.testSuite.testCases["TestCaseName"]
+runner = tCase.run(new com.eviware.soapui.support.types.StringToObjectMap(), false);
+
+groovy code to loop test cases in a test suite
+==================================
+def testCases = context.testCase.testSuite.getTestCaseList() 
+testCases.each{
+log.info(it.name)
+}
+
+
+command line run
+==============
+cd C:\Program Files\SmartBear\SoapUI-5.4.0\bin\
+testrunner.bat -sTestSuite3 -cTestCase2 "C:\Users\Raghav Pal\OneDrive\Projects\SoapUIProjects\CountryInfoService-soapui-project1.xml"
+
+
+1. Install git on windows
+2. Create GitHub account
+3. Add SoapUI Project on Git
+4. Add, commit, push Changes
+5. Remove project from Git
+
+Step 1 : Download and Install Git
+
+Step 2 : Create GitHub account
+
+Step 3 : Add SoapUI Project to Git
+ Goto Command Prompt
+ Goto location of SoapUI Project
+ git init
+ git status
+ git add .
+ git commit -m "commit message"
+ git push -u url master
+
+Step 4 : Validate changes are pushed to repository
+
+Step 5 : Remove project from Git
